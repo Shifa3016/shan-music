@@ -54,11 +54,24 @@ const Spotify = () => {
     }
 
     const playMusic = (track, pause = false) => {
-      const encodedTrack = encodeURIComponent(track); // Ensure track name is URL encoded
-      currentSong.src = `/Songs/${currFolder}/${encodedTrack}`;
-      console.log("Current song source:", currentSong.src); // Log the song source path
+      console.log("Current folder:", currFolder);
+      console.log("Track name before modification:", track);
     
-      currentSong.load(); // Ensure the song is loaded before playing
+      // Ensure that track is just the filename, not a full path
+      if (track.startsWith('/Songs/')) {
+        track = track.split('/').pop(); // Extract just the filename
+      }
+    
+      console.log("Track name after modification:", track); // Log the modified track name
+    
+      // Construct the correct URL path
+      const trackPath = `/Songs/${currFolder}/${track}`;
+      console.log("Generated song path:", trackPath); // Log the generated path
+    
+      // Set the source and load the song
+      currentSong.pause(); // Pause any currently playing song
+      currentSong.src = trackPath;
+      currentSong.load(); // Load the new song
     
       if (!pause) {
         currentSong.play().then(() => {
@@ -69,9 +82,11 @@ const Spotify = () => {
         });
       }
     
+      // Display only the filename in song info
       document.querySelector(".songInfo").innerHTML = decodeURI(track);
       document.querySelector(".songTime").innerHTML = "00:00 / 00:00";
     };
+    
     
     
     async function displayAlbums() {
