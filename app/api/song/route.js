@@ -13,7 +13,10 @@ export async function GET(req) {
       const folderPath = path.join(songsDirectory, folder);
       const files = fs.readdirSync(folderPath);
 
-      result[folder] = files.filter(file => file.endsWith('.mp3'));
+      // Generate URLs instead of reading files directly
+      result[folder] = files
+        .filter(file => file.endsWith('.mp3'))
+        .map(file => `/Songs/${folder}/${file}`);
     }
     
     return new Response(JSON.stringify(result), {
